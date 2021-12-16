@@ -39,14 +39,14 @@ cur = con.cursor()
 # SQL select statement using sqlite3 function (returning a list)
 cur.execute("SELECT * FROM game")
 L = cur.fetchall()
-print("List length:", len(L))
+# print("List length:", len(L))
 # print(L[0])  # print the first record in the table "game"
 
 # SQL select statement using Pandas
 # print(str(pd.read_sql_query("SELECT * FROM game WHERE SEASON_ID=22020", con).columns.values).replace(' ', ', '))
 df = pd.read_sql_query("SELECT * FROM game WHERE SEASON_ID=22020", con)
-pd.set_option('display.max_columns', None)
-for i in range(len(df)):
+pd.set_option('display.max_columns', None)  # 设置输出列数不受限
+for i in range(len(df)):    # 将胜负结果设为1或0
     if df.iloc[i, 7] == 'W':
         df.iloc[i, 7] = 1
     if df.iloc[i, 33] == 'W':
@@ -55,20 +55,21 @@ for i in range(len(df)):
         df.iloc[i, 7] = 0
     if df.iloc[i, 33] == 'L':
         df.iloc[i, 33] = 0
-    if df.iloc[i, 7] is None:
+    if df.iloc[i, 7] is None:   # 无胜负结果的先置-1，不然下面转格式会报错
         df.iloc[i, 7] = -1
     if df.iloc[i, 33] is None:
         df.iloc[i, 33] = -1
 df['WL_HOME'] = df['WL_HOME'].astype(int)
 df['WL_AWAY'] = df['WL_AWAY'].astype(int)
-for i in range(len(df)):
+for i in range(len(df)):    # 再把无结果的转回去
     if df.iloc[i, 7] == -1:
         df.iloc[i, 7] = None
     if df.iloc[i, 33] == -1:
         df.iloc[i, 33] = None
+
 pearson = df.corr()    # 默认使用pearson相关系数
 kendall = df.corr('kendall')    # Kendall Tau相关系数
 spearman = df.corr('spearman')    # spearman相关系数
 
-print(pearson['WL_HOME'].sort_values(ascending=False))
+print(pearson['WL_HOME'].sort_values(ascending=False))  # 降序输出相关性
 print(pearson['WL_AWAY'].sort_values(ascending=False))
