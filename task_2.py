@@ -66,6 +66,9 @@ for i in range(len(df)):
         df.iloc[i, 7] = None
     if df.iloc[i, 33] == -1:
         df.iloc[i, 33] = None
-corr = df.corr()
-print(corr['WL_HOME'].sort_values(ascending=False))
-print(corr['WL_AWAY'].sort_values(ascending=False))
+pearson = df.corr()    # 默认使用pearson相关系数
+kendall = df.corr('kendall')    # Kendall Tau相关系数
+spearman = df.corr('spearman')    # spearman相关系数
+
+print(pearson['WL_HOME'].sort_values(ascending=False))
+print(pearson['WL_AWAY'].sort_values(ascending=False))
