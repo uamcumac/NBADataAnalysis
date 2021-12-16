@@ -4,10 +4,12 @@ import sqlite3
 
 """
 [40%] Your boss would like to know the top-3 players of the best cost–performance ratio in 2020/2021 season,
-where the cost and the performance can be calculated by PERFORMANCE: Efficiency equation based on the statistics in
-the (3) Kaggle 2020/2021 season data. You could replace this equation if there is any better option. COST: Salary
-in table "Player_Salary" of (1) Kaggle basketball dataset. You are welcome to develop any better equation(s) to
-estimate the CP ratio to rank the top-3 players.
+where the cost and the performance can be calculated by 
+
+PERFORMANCE: Efficiency equation based on the statistics in the (3) Kaggle 2020/2021 season data. 
+    You could replace this equation if there is any better option.     
+COST: Salary in table "Player_Salary" of (1) Kaggle basketball dataset. 
+You are welcome to develop any better equation(s) to estimate the CP ratio to rank the top-3 players.
 """
 
 """
