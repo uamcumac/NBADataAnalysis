@@ -1,8 +1,7 @@
-import numpy as np
 import pandas as pd
 import sqlite3
-import matplotlib.pyplot as plt
-import scipy.stats as stats
+
+from matplotlib import pyplot as plt
 
 """
 [40%] Your boss would like to know the winning secret from the games in 2020/2021. Please give your finding by 
@@ -41,12 +40,32 @@ cur = con.cursor()
 cur.execute("SELECT * FROM game")
 L = cur.fetchall()
 print("List length:", len(L))
-print(L[0])  # print the first record in the table "game"
+# print(L[0])  # print the first record in the table "game"
 
 # SQL select statement using Pandas
+# print(str(pd.read_sql_query("SELECT * FROM game WHERE SEASON_ID=22020", con).columns.values).replace(' ', ', '))
 df = pd.read_sql_query("SELECT * FROM game WHERE SEASON_ID=22020", con)
-print("Pandas dataframe size:", len(df))
-# print(df.iloc[0])  # print the first record in the table "game" of year 2020
-print(df.corr())
-fig = pd.plotting.scatter_matrix(df, figsize=(6, 6), c='blue', marker='o', diagonal='', alpha=0.8, range_padding=0.2)
-plt.show()
+pd.set_option('display.max_columns', None)
+for i in range(len(df)):
+    if df.iloc[i, 7] == 'W':
+        df.iloc[i, 7] = 1
+    if df.iloc[i, 33] == 'W':
+        df.iloc[i, 33] = 1
+    if df.iloc[i, 7] == 'L':
+        df.iloc[i, 7] = 0
+    if df.iloc[i, 33] == 'L':
+        df.iloc[i, 33] = 0
+    if df.iloc[i, 7] is None:
+        df.iloc[i, 7] = -1
+    if df.iloc[i, 33] is None:
+        df.iloc[i, 33] = -1
+df['WL_HOME'] = df['WL_HOME'].astype(int)
+df['WL_AWAY'] = df['WL_AWAY'].astype(int)
+for i in range(len(df)):
+    if df.iloc[i, 7] == -1:
+        df.iloc[i, 7] = None
+    if df.iloc[i, 33] == -1:
+        df.iloc[i, 33] = None
+corr = df.corr()
+print(corr['WL_HOME'].sort_values(ascending=False))
+print(corr['WL_AWAY'].sort_values(ascending=False))
