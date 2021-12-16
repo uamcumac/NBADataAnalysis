@@ -1,3 +1,7 @@
+import pandas as pd
+import numpy as np
+import sqlite3
+
 """
 [40%] Your boss would like to know the top-3 players of the best cost–performance ratio in 2020/2021 season,
 where the cost and the performance can be calculated by PERFORMANCE: Efficiency equation based on the statistics in
@@ -20,9 +24,6 @@ TOV（或TO）: Turnovers 失误次数
 GM, GP; GS: games played; games started
 """
 
-import pandas as pd
-import numpy as np
-import sqlite3
 
 con = sqlite3.connect('datasets/basketball.sqlite')
 cur = con.cursor()
