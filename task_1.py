@@ -17,17 +17,58 @@
 # GM, GP; GS: games played; games started
 
 import pandas as pd
+import numpy as np
+import sqlite3
+
+con = sqlite3.connect('datasets/basketball.sqlite')
+cur = con.cursor()
+
+# SQL select statement using sqlite3 function (returning a list)
+# cur.execute("SELECT * FROM Player_Salary")
+# L = cur.fetchall()
+# print("List length:", len(L))
+# print(L[0])  # print the first record in the table "game"
+
+# SQL select statement using Pandas
+# df = pd.read_sql_query("SELECT * FROM game WHERE SEASON_ID=22020", con)
+# print("Pandas dataframe size:", len(df))
+# print(df.iloc[0])  # print the first record in the table "game" of year 2020
 
 df = pd.read_csv('datasets/nba2021_per_game.csv')
-top10 = []
+
+cps = {}
+rank = []
 
 
 def Efficiency(r):
-    return r['PTS'] + r['ORB'] + r['DRB'] + r['AST'] + r['STL'] + r['BLK'] - r['FGA'] * (1-r['FG%']) \
-           - r['FTA'] * (1-r['FT%']) - r['TOV']
+    return r['PTS'] + r['ORB'] + r['DRB'] + r['AST'] + r['STL'] + r['BLK'] - (r['FGA'] - r['FG']) \
+           - (r['FTA'] - r['FT']) - r['TOV']
+
+
+def get_salary(name):
+    salarys = pd.read_sql_query("SELECT value FROM Player_Salary WHERE namePlayer = ?", con, params=(name,))
+    # print("salarys:", salarys)
+    return np.average(salarys) / 1000000 if len(salarys) != 0 else -1
 
 
 for i in range(len(df)):
     record = df.iloc[i]
     EFF = Efficiency(record)
-    print(i, record['Player'], EFF)
+    salary = get_salary(record['Player'])
+    if salary == -1:
+        # print(i, 'No salary record of player: {}'.format(record['Player']))
+        continue
+    name = EFF / salary
+    if record['Player'] not in cps.keys():
+        cps[record['Player']] = []
+    cps[record['Player']].append(name)
+    # print(i, record['Player'], "%.5f" % EFF, "%.5f" % salary, "%.5f" % cp)
+
+for name in cps.keys():
+    if len(cps[name]) > 1:
+        cps[name] = np.average(cps[name])
+    rank.append([name, cps[name]])
+list.sort(rank, key=lambda x: x[1], reverse=True)
+print('the top-3 players are:')
+for i in range(3):
+    print(*rank[i])
