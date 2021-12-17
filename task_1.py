@@ -30,17 +30,6 @@ GM, GP; GS: games played; games started
 con = sqlite3.connect('datasets/basketball.sqlite')
 cur = con.cursor()
 
-# SQL select statement using sqlite3 function (returning a list)
-# cur.execute("SELECT * FROM Player_Salary")
-# L = cur.fetchall()
-# print("List length:", len(L))
-# print(L[0])  # print the first record in the table "game"
-
-# SQL select statement using Pandas
-# df = pd.read_sql_query("SELECT * FROM game WHERE SEASON_ID=22020", con)
-# print("Pandas dataframe size:", len(df))
-# print(df.iloc[0])  # print the first record in the table "game" of year 2020
-
 df = pd.read_csv('datasets/nba2021_per_game.csv')
 
 cps = {}
