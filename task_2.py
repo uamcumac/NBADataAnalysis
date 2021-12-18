@@ -20,8 +20,16 @@ winning secret since bilibala bilibala…
 """
 column descriptors and equations created via the NBA Stats Glossary, https://www.nba.com/stats/help/glossary/
 
-SEASON_ID: 赛季ID，22020为题目要求的赛季
-WL: Win or Loss
+"XXXX" for "HOME" or "AWAY"
+WL_XXXX: Win or Loss
+PLUS_MINUS_XXXX: The point differential when a player or team is on the floor
+XXXX_TEAM_WINS: ? - The number of games won by a player or team
+XXXX_TEAM_LOSSES: ? - The number of games lost by a player or team
+PTS_XXXX: Points, The number of points scored
+PTS_XXXX_y: ?
+FG_PCT_XXXX: ? - 2 and 3 Point Field Goal Percentage, The percentage of 2 and 3 point field goal attempts of a specified criteria that a player or team makes
+FGM_XXXX: Field Goals Made, The number of field goals that a player or team has made. This includes both 2 pointers and 3 pointers
+FG3_PCT_XXXX: 3 Point Field Goal Percentage, The percentage of 3 point field goal attempts of a specified criteria that a player or team makes
 
 """
 
@@ -31,11 +39,8 @@ cur = con.cursor()
 # SQL select statement using sqlite3 function (returning a list)
 cur.execute("SELECT * FROM game")
 L = cur.fetchall()
-# print("List length:", len(L))
-# print(L[0])  # print the first record in the table "game"
 
 # SQL select statement using Pandas
-# print(str(pd.read_sql_query("SELECT * FROM game WHERE SEASON_ID=22020", con).columns.values).replace(' ', ', '))
 df = pd.read_sql_query("SELECT * FROM game WHERE SEASON_ID=22020", con)
 pd.set_option('display.max_columns', None)  # 设置输出列数不受限
 for i in range(len(df)):  # 将胜负结果设为1或0
