@@ -9,43 +9,47 @@ You will get (up to) 30% if you successfully run your analysis on this dataset.
 如果只用数据集（1）和（3）来回答这个任务，最高分是20%。
 您可以尝试分析 (2) NBA Basketball Datasets 中的数据，这些数据集提供了每场比赛中最详细的动作。如果您成功地对该数据集运行分析，您将获得（最多）30%
 '''
+'''
+'Player', 'Pos', 'Age', 'Tm', 'G', 'GS', 'MP', 'FG', 'FGA', 'FG%', '3P', '3PA', '3P%', '2P', '2PA', '2P%', 'eFG%',
+       'FT', 'FTA', 'FT%', 'ORB', 'DRB', 'TRB', 'AST', 'STL', 'BLK', 'TOV', 'PF', 'PTS'
+'球员', '位置', '年龄', '球队', '出场次数', '首发出场次数', '出场时间', '命中次数', '出手次数', '命中率', '三分球命中', '三分球出手', '三分球命中率', '两分球命中', '两分球出手', '两分球命中率', '真实命中率',
+       '罚球命中', '罚球次数', '罚球命中率', '进攻篮板', '防守篮板', '总篮板', '助攻', '抢断', '盖帽', '失误', '犯规', '得分'
+'''
 
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
 data = pd.read_csv('datasets/nba2021_per_game.csv')
-column = ['Player', '位置', '年龄', '球队', '出场次数', '首发出场次数', '出场时间', '命中次数', '出手次数',
-       '命中率', '三分球命中', '三分球出手', '三分球命中率', '两分球命中', '两分球出手', '两分球命中率', '真实命中率',
-       '罚球命中', '罚球次数', '罚球命中率', '进攻篮板', '防守篮板', '总篮板', '助攻', '抢断', '盖帽', '失误',
-       '犯规', '得分']
+column = ['Player', 'Pos', 'Age', 'Tm', 'G', 'GS', 'MP', 'FG', 'FGA',
+       'FG%', '3P', '3PA', '3P%', '2P', '2PA', '2P%', 'eFG%',
+       'FT', 'FTA', 'FT%', 'ORB', 'DRB', 'TRB', 'AST', 'STL', 'BLK', 'TOV',
+       'PF', 'PTS']
 data.columns = column
 
-
 import matplotlib.pyplot as plt
-x = data['球队'].value_counts().index
-y = data['球队'].value_counts().values
-plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
-plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
+x = data['Tm'].value_counts().index
+y = data['Tm'].value_counts().values
+
 plt.figure(figsize=(13,5))
 plt.bar(x,y)
-plt.title("每队的球员数")
+plt.title("Number of players in each team")
 plt.xlabel('team')
 plt.ylabel('number')
-# plt.savefig('每队的球员数.png',dpi=600)
+# plt.savefig('Number of players in each team.png',dpi=600)
 
 # coding=utf-8
 import numpy as np
 import matplotlib.pyplot as plt
 def fun(team,Player):
-    data1 = data.loc[data['球队']==team]
-    lanban = data1['总篮板']
-    zhugong = data1['助攻']
-    defen = data1['得分']
-    sanfen = data1['三分球命中']
-    toulan = data1['两分球命中率']
-    gaimao = data1['盖帽']
-    qiangduan = data1['抢断']
+    data1 = data.loc[data['Tm']==team]
+    lanban = data1['TRB']
+    zhugong = data1['AST']
+    defen = data1['PTS']
+    sanfen = data1['3P']
+    toulan = data1['2P%']
+    gaimao = data1['BLK']
+    qiangduan = data1['STL']
     lanban_max = max(lanban)
     zhugong_max = max(zhugong)
     defen_max = max(defen)
@@ -53,9 +57,9 @@ def fun(team,Player):
     toulan_max = max(toulan)
     gaimao_max = max(gaimao)
     qiangduan_max = max(qiangduan)
-    x = np.array(data1.loc[data1['Player'] == Player][['总篮板','助攻','得分',
-                                                    '三分球命中','两分球命中率','盖帽','抢断']])[0]
-    keys = ['总篮板','助攻','得分','三分球命中','两分球命中率','盖帽','抢断']
+    x = np.array(data1.loc[data1['Player'] == Player][['TRB','AST','PTS',
+                                                    '3P','2P%','BLK','STL']])[0]
+    keys = ['TRB','AST','PTS','3P','2P%','BLK','STL']
     values = [x[0]/lanban_max*100,x[1]/zhugong_max*100,
             x[2]/defen_max*100,x[3]/sanfen_max*100,x[4]/toulan_max*100
             ,x[5]/gaimao_max*100,x[6]/qiangduan_max*100]
@@ -92,54 +96,54 @@ def fun(team,Player):
     return values
 
 score = []
-for i in data['球队'].value_counts().index:
-    for j in data.loc[data['球队']==i]['Player'].values:
+for i in data['Tm'].value_counts().index:
+    for j in data.loc[data['Tm']==i]['Player'].values:
         score.append(fun(i,j))
 
-player = pd.DataFrame(score,columns=['总篮板','助攻','得分',
-        '三分球命中','两分球命中率','盖帽','抢断'])
+player = pd.DataFrame(score,columns=['TRB','AST','PTS',
+        '3P','2P%','BLK','STL'])
 Player = []
 team = []
-for i in data['球队'].value_counts().index:
-    for j in data.loc[data['球队']==i]['Player'].values:
+for i in data['Tm'].value_counts().index:
+    for j in data.loc[data['Tm']==i]['Player'].values:
         Player.append(j)
         team.append(i)
-player['球员'] = Player
-player['球队'] = team
-player['出场次数'] = player['球员'].map(dict(zip(data['Player'].values,data['出场次数'].values)))
-player['首发出场次数'] = player['球员'].map(dict(zip(data['Player'].values,data['首发出场次数'].values)))
-player['出场时间'] = player['球员'].map(dict(zip(data['Player'].values,data['出场时间'].values)))
+player['Player'] = Player
+player['Tm'] = team
+player['G'] = player['Player'].map(dict(zip(data['Player'].values,data['G'].values)))
+player['GS'] = player['Player'].map(dict(zip(data['Player'].values,data['GS'].values)))
+player['MP'] = player['Player'].map(dict(zip(data['Player'].values,data['MP'].values)))
 
 Team = []
 bestplayer = []
-for i in data['球队'].value_counts().index:
-    test = player.loc[player['球队'] == i]
-    test['出场次数'] = test['出场次数']/test['出场次数'].max()*100
-    test['首发出场次数'] = test['首发出场次数']/test['首发出场次数'].max()*100
-    test['出场时间'] = test['出场时间']/test['出场时间'].max()*100
-    test['加权总得分'] = test[['总篮板','助攻','得分',
-          '三分球命中','两分球命中率','盖帽','抢断','出场次数','出场时间','首发出场次数']].sum(axis = 1)
-    test = test.sort_values(by = '加权总得分',ascending=0)
+for i in data['Tm'].value_counts().index:
+    test = player.loc[player['Tm'] == i]
+    test['G'] = test['G']/test['G'].max()*100
+    test['GS'] = test['GS']/test['GS'].max()*100
+    test['MP'] = test['MP']/test['MP'].max()*100
+    test['Weighted total score'] = test[['TRB','AST','PTS',
+          '3P','2P%','BLK','STL','G','MP','GS']].sum(axis = 1)
+    test = test.sort_values(by = 'Weighted total score',ascending=0)
     Team.append(i)
-    bestplayer.append(test['球员'].values[0])
-    print("球队：",i," 最重要的球星：",test['球员'].values[0])
-    test.to_csv('球队'+i+'球员数据总得分.csv',index = 0)
-data_best = pd.DataFrame(Team,columns = ['球队'])
-data_best['球员'] = bestplayer
+    bestplayer.append(test['Player'].values[0])
+    print("Team：",i,"  The most important player：",test['Player'].values[0])
+    # test.to_csv('Tm'+i+'球员数据总得分.csv',index = 0)
+data_best = pd.DataFrame(Team,columns = ['Tm'])
+data_best['Player'] = bestplayer
 # data_best.to_csv('各队最重要的球星.csv',index = 0)
 
 import sqlite3 as sql
 conn = sql.connect('datasets/basketball.sqlite') # create connection object to database
 df = pd.read_sql('select * from Player_Salary', conn)
 df = df[['namePlayer','value']].groupby(by='namePlayer').agg(np.mean)['value']
-df_= pd.DataFrame(df.values,columns=['工资'])
-df_['球员'] = df.index
-data['工资'] = data['Player'].map(dict(zip(df_['球员'],df_['工资'])))
-for i in data['球队'].value_counts().index:
-    test = data.loc[data['球队']==i]
-    test = test.sort_values(by='工资',ascending=0)
-    print(i+'球队工资最高的球员:',test['Player'].values[0])
-    # test.to_csv('球队'+i+'球员工资排名.csv',index = 0)
+df_= pd.DataFrame(df.values,columns=['salary'])
+df_['Player'] = df.index
+data['salary'] = data['Player'].map(dict(zip(df_['Player'],df_['salary'])))
+for i in data['Tm'].value_counts().index:
+    test = data.loc[data['Tm']==i]
+    test = test.sort_values(by='salary',ascending=0)
+    print("Team：",i,"  The highest paid player：",test['Player'].values[0])
+    # test.to_csv('Tm'+i+'球员工资排名.csv',index = 0)
 
 
 
